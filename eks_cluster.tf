@@ -13,7 +13,7 @@ resource "aws_eks_cluster" "control_plane" {
   ]
   vpc_config {
     subnet_ids = "${var.control_plane_subnet_ids}"
-    security_group_ids = "${flatten([aws_security_group.kubernetes_control_plane_security_group.id, var.control_plane_security_group_ids])}"
+    security_group_ids = "${flatten([aws_security_group.control_plane.id, var.control_plane_security_group_ids])}"
 
     endpoint_private_access = true
     endpoint_public_access = true

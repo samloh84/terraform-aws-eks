@@ -32,7 +32,7 @@ resource "aws_launch_template" "worker_node" {
   name_prefix = "${var.cluster_name}_node"
   image_id = "${data.aws_ami.eks_optimized_ami.id}"
   instance_type = "${var.worker_node_instance_type}"
-  vpc_security_group_ids = "${flatten([aws_security_group.kubernetes_worker_node_security_group.id, var.worker_node_security_group_ids])}"
+  vpc_security_group_ids = "${flatten([aws_security_group.worker_node.id, var.worker_node_security_group_ids])}"
 
   block_device_mappings {
     device_name = "/dev/xvda"
