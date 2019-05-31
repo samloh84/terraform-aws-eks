@@ -20,4 +20,10 @@ resource "aws_eks_cluster" "control_plane" {
   }
 
   depends_on = ["aws_iam_role_policy_attachment.control_plane_eks_cluster_policy","aws_iam_role_policy_attachment.control_plane_eks_service_policy"]
+
+  timeouts {
+    create = "1h"
+    delete = "1h"
+    update = "1h"
+  }
 }
