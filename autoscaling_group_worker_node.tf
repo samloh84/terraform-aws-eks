@@ -53,7 +53,9 @@ resource "aws_launch_template" "worker_node" {
     resource_type = "instance"
     tags = "${merge(
     map("Name", "${var.cluster_name}.node"),
-    map("kubernetes.io/cluster/${var.cluster_name}", "owned")
+    map("kubernetes.io/cluster/${var.cluster_name}", "owned"),
+    map("Project", "${var.project_name}"),
+    map("Owner", "${var.owner_name}")
     )}"
 
   }
@@ -66,11 +68,15 @@ resource "aws_launch_template" "worker_node" {
     resource_type = "volume"
     tags = {
       Name = "${var.cluster_name}.worker_node"
+      Project = "${var.project_name}"
+      Owner = "${var.owner_name}"
     }
   }
 
   tags = {
     Name = "${var.cluster_name}.worker_node"
+    Project = "${var.project_name}"
+    Owner = "${var.owner_name}"
   }
 
   user_data = "${base64encode(data.template_file.user_data_worker_node.rendered)}"
