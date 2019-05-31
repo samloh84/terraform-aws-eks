@@ -15,8 +15,8 @@ data "aws_ami" "eks_optimized_ami" {
 
 
 data "template_file" "user_data_worker_node" {
-  template = "${file("${path.module}/node_user_data.yml")}"
-  vars {
+  template = "${file("${path.module}/user_data_worker_node.yml")}"
+  vars = {
     cluster_name = "${var.cluster_name}"
     cluster_auth_base64 = "${aws_eks_cluster.control_plane.certificate_authority.0.data}"
     endpoint = "${aws_eks_cluster.control_plane.endpoint}"
@@ -28,13 +28,17 @@ data "template_file" "user_data_worker_node" {
 }
 
 
+output "t" {
+  value = "${data.aws_ami.eks_optimized_ami.block_device_mappings}"
+}
+
+
 // https://www.terraform.io/docs/providers/aws/r/launch_template.html
 resource "aws_launch_template" "worker_node" {
   name_prefix = "${var.cluster_name}_node"
   image_id = "${data.aws_ami.eks_optimized_ami.id}"
   instance_type = "${var.worker_node_instance_type}"
-  vpc_security_group_ids = [
-    "${concat(list("${aws_security_group.nodes.id}"), "${var.node_security_group_ids}")}"]
+  vpc_security_group_ids = "${flatten([aws_security_group.kubernetes_worker_node_security_group.id, var.worker_node_security_group_ids])}"
 
   block_device_mappings {
     device_name = "/dev/xvda"
@@ -60,7 +64,7 @@ resource "aws_launch_template" "worker_node" {
 
   }
 
-  credit_specification = {
+  credit_specification {
     cpu_credits = "unlimited"
   }
 
@@ -80,8 +84,7 @@ resource "aws_launch_template" "worker_node" {
 
 // https://www.terraform.io/docs/providers/aws/r/autoscaling_group.html
 resource "aws_autoscaling_group" "worker_node" {
-  vpc_zone_identifier = [
-    "${var.worker_node_subnet_ids}"]
+  vpc_zone_identifier = "${flatten([var.worker_node_subnet_ids])}"
   desired_capacity = "${var.worker_node_desired_capacity}"
   max_size = "${var.worker_node_max_size}"
   min_size = "${var.worker_node_min_size}"

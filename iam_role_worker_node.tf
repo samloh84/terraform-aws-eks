@@ -1,6 +1,6 @@
 // https://www.terraform.io/docs/providers/aws/r/iam_role.html
 resource "aws_iam_role" "worker_node" {
-  name = "eks.${var.cluster_name}"
+  name = "eks.${var.cluster_name}.worker_node"
 
   assume_role_policy = <<EOF
 {

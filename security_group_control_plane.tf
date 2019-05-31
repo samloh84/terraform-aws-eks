@@ -5,7 +5,7 @@
 resource "aws_security_group" "kubernetes_control_plane_security_group" {
   name = "${var.cluster_name}.control_plane"
   vpc_id = "${var.vpc_id}"
-  tags {
+  tags = {
     Name = "${var.cluster_name}.control_plane"
     Cluster = "${var.cluster_name}"
     Project = "${var.project_name}"

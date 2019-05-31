@@ -5,7 +5,7 @@
 resource "aws_security_group" "kubernetes_worker_node_security_group" {
   name = "${var.cluster_name}.worker_node"
   vpc_id = "${var.vpc_id}"
-  tags {
+  tags = {
     Name = "${var.cluster_name}.worker_node"
     Cluster = "${var.cluster_name}"
     Project = "${var.project_name}"
@@ -28,7 +28,7 @@ resource "aws_security_group_rule" "worker_node_https_to_control_plane" {
 resource "aws_security_group_rule" "worker_node_all_from_control_plane" {
   from_port = 0
   protocol = "-1"
-  source_security_group_id = "${aws_security_group.kubernetes_control_plane_security_group}"
+  source_security_group_id = "${aws_security_group.kubernetes_control_plane_security_group.id}"
   to_port = 0
   type = "ingress"
   security_group_id = "${aws_security_group.kubernetes_worker_node_security_group.id}"

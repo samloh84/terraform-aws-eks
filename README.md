@@ -1,6 +1,6 @@
-# Terraform AWS Bastion - Centos
+# Terraform AWS EKS
 
-Terraform module for creating an autoscaling group of CentOS Bastion hosts on AWS. 
+Terraform module for creating an EKS Cluster on AWS 
 
 ## Usage
 

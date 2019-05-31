@@ -7,13 +7,17 @@ resource "aws_eks_cluster" "control_plane" {
   enabled_cluster_log_types = [
     "api",
     "audit",
-    "authenticator"
+    "authenticator",
+    "controllerManager",
+    "scheduler"
   ]
   vpc_config {
     subnet_ids = "${var.control_plane_subnet_ids}"
-    security_group_ids = "${aws_security_group.kubernetes_control_plane_security_group.id}"
+    security_group_ids = "${flatten([aws_security_group.kubernetes_control_plane_security_group.id, var.control_plane_security_group_ids])}"
 
     endpoint_private_access = true
     endpoint_public_access = true
   }
+
+  depends_on = ["aws_iam_role_policy_attachment.control_plane_eks_cluster_policy","aws_iam_role_policy_attachment.control_plane_eks_service_policy"]
 }

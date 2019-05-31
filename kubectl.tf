@@ -1,8 +1,6 @@
-
-
 data "template_file" "node_config_map" {
   template = "${file("${path.module}/aws-auth-cm.yml")}"
-  vars {
+  vars = {
     node_role_arn = "${aws_iam_role.worker_node.arn}"
   }
 }
@@ -15,7 +13,7 @@ resource "local_file" "aws-auth-cm" {
 
 data "template_file" "kubeconfig" {
   template = "${file("${path.module}/kubeconfig.yml")}"
-  vars {
+  vars = {
     cluster_name = "${var.cluster_name}"
     cluster_auth_base64 = "${aws_eks_cluster.control_plane.certificate_authority.0.data}"
     endpoint = "${aws_eks_cluster.control_plane.endpoint}"
@@ -25,7 +23,7 @@ data "template_file" "kubeconfig" {
 
 resource "local_file" "kubeconfig" {
   content = "${data.template_file.kubeconfig.rendered}"
-  filename = "${path.cwd}/kubeconfig.yml"
+  filename = "${path.cwd}/${var.cluster_name}_kubeconfig.yml"
 }
 
 resource "null_resource" "run_kubectl" {
@@ -34,12 +32,12 @@ resource "null_resource" "run_kubectl" {
       "/bin/bash",
       "-c"]
     command = "kubectl apply -f ${local_file.aws-auth-cm.filename}"
-    environment {
+    environment = {
       KUBECONFIG = "${local_file.kubeconfig.filename}"
     }
   }
 
-  triggers {
+  triggers = {
     eks_cluster_id = "${aws_eks_cluster.control_plane.id}"
   }
 }
