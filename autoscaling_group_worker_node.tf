@@ -27,12 +27,6 @@ data "template_file" "user_data_worker_node" {
   }
 }
 
-
-output "t" {
-  value = "${data.aws_ami.eks_optimized_ami.block_device_mappings}"
-}
-
-
 // https://www.terraform.io/docs/providers/aws/r/launch_template.html
 resource "aws_launch_template" "worker_node" {
   name_prefix = "${var.cluster_name}_node"

@@ -30,8 +30,3 @@ module "eks" {
   control_plane_security_group_ids = ["${module.vpc-simple.security_group_application_tier_id}"]
   worker_node_security_group_ids = ["${module.vpc-simple.security_group_application_tier_id}"]
 }
-
-
-output "t" {
-  value = "${module.eks.t}"
-}
