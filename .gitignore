@@ -3,3 +3,5 @@
 terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
+output_*.log
+.terraform.tfstate.lock.info

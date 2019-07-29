@@ -1,20 +1,24 @@
+data "external" "local_ip" {
+  program = ["python", "${path.module}/checkip.py"]
+}
+
+
 module "vpc-simple" {
   source = "git::https://github.com/samloh84/terraform-aws-vpc-simple.git"
   vpc_cidr_block = "10.0.0.0/16"
-  remote_management_cidrs = [
-    "0.0.0.0/0"]
+  remote_management_cidrs = [data.external.local_ip.result.ip]
   vpc_name = "vpc-simple"
   vpc_owner = "Samuel"
 }
 
 
 module "eks" {
-  source = "../"
+  source = "../../../"
   cluster_name = "eks"
-  control_plane_subnet_ids = "${module.vpc-simple.subnet_application_tier_ids}"
+  control_plane_subnet_ids = module.vpc-simple.subnet_application_tier_ids
   owner_name = "Samuel"
   project_name = "eks"
-  vpc_id = "${module.vpc-simple.vpc_id}"
+  vpc_id = module.vpc-simple.vpc_id
   vpc_name = "vpc-simple"
   worker_node_bootstrap_extra_args = ""
   worker_node_desired_capacity = "1"
@@ -25,8 +29,10 @@ module "eks" {
   worker_node_min_size = "1"
   worker_node_post_commands = ""
   worker_node_pre_commands = ""
-  worker_node_subnet_ids = "${module.vpc-simple.subnet_application_tier_ids}"
+  worker_node_subnet_ids = module.vpc-simple.subnet_application_tier_ids
   worker_node_volume_size = "200"
-  control_plane_security_group_ids = ["${module.vpc-simple.security_group_application_tier_id}"]
-  worker_node_security_group_ids = ["${module.vpc-simple.security_group_application_tier_id}"]
+  control_plane_security_group_ids = [
+    module.vpc-simple.security_group_application_tier_id]
+  worker_node_security_group_ids = [
+    module.vpc-simple.security_group_application_tier_id]
 }

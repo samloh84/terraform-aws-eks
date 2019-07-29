@@ -6,9 +6,10 @@ fi
 
 let TIMESTAMP=$(date "+%Y%m%d%H%M%S")
 
-cd test
-terraform init
-terraform apply -auto-approve | tee output_${TIMESTAMP}.log
-TEST_RESULT=$?
-terraform destroy -auto-approve
-exit ${TEST_RESULT}
+
+bundle exec kitchen test
+
+
+if command -v osascript; then
+osascript -e 'tell app "System Events" to display alert "terraform-aws-eks" message "terraform-aws-eks kitchen test completed."'
+fi

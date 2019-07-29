@@ -20,20 +20,20 @@ EOF
 
   tags = {
     Name = "${var.cluster_name}.control_plane"
-    Cluster = "${var.cluster_name}"
-    Project = "${var.project_name}"
-    Owner = "${var.owner_name}"
+    Cluster = var.cluster_name
+    Project = var.project_name
+    Owner = var.owner_name
   }
 }
 
 // https://www.terraform.io/docs/providers/aws/r/iam_role_attachment.html
 resource "aws_iam_role_policy_attachment" "control_plane_eks_cluster_policy" {
-  role = "${aws_iam_role.control_plane.id}"
+  role = aws_iam_role.control_plane.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
 }
 // https://www.terraform.io/docs/providers/aws/r/iam_role_attachment.html
 resource "aws_iam_role_policy_attachment" "control_plane_eks_service_policy" {
-  role = "${aws_iam_role.control_plane.id}"
+  role = aws_iam_role.control_plane.id
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
 }
 

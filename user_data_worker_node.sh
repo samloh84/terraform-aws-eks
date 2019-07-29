@@ -7,6 +7,6 @@ ${node_pre}
 --apiserver-endpoint '${endpoint}' \
 ${bootstrap_extra_args} \
 --kubelet-extra-args '${kubelet_extra_args}' \
-  '${cluster_name}'
+'${cluster_name}'
 
 ${node_post}
